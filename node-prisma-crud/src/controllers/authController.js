@@ -28,8 +28,16 @@ exports.login = async (req, res) => {
       expiresIn: '1h',  // Token expira em 1 hora
     });
 
-    // Retorna o token para o cliente
-    res.json({ token });
+    // Define o cookie com o token
+    res.cookie('token', token, {
+      httpOnly: true, // O cookie não é acessível via JavaScript
+      secure: process.env.NODE_ENV === 'production', // Use true apenas em produção
+      maxAge: 3600000, // 1 hora
+      sameSite: 'Strict', // Protege contra CSRF
+    });
+
+    // Retorna uma resposta de sucesso
+    res.status(200).json({ message: 'Login realizado com sucesso' });
   } catch (error) {
     res.status(500).json({ message: 'Erro ao realizar login', error });
   }

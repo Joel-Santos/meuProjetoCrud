@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
-  const isAuthenticated = !!localStorage.getItem('token'); // Verifica se o token existe
+  const isAuthenticated = !! localStorage.getItem('token'); // Verifica se o token existe
 
   return (
     <Route

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const UserList = () => {
   const [usuarios, setUsuarios] = useState([]);
@@ -11,9 +12,10 @@ const UserList = () => {
   // Função para buscar todos os usuários
   const fetchUsuarios = async () => {
     try {
-      const response = await fetch('http://localhost:3000/usuarios');
-      const data = await response.json();
-      setUsuarios(data);
+      const response = await axios.get('http://localhost:4000/usuarios', {
+        withCredentials: true, // Enviar cookies
+      });
+      setUsuarios(response.data);
     } catch (error) {
       setError('Erro ao buscar usuários');
     }
@@ -23,31 +25,27 @@ const UserList = () => {
   const createUsuario = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch('http://localhost:3000/usuarios', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ nome, email, senha }),
+      await axios.post('http://localhost:4000/usuarios', {
+        nome,
+        email,
+        senha,
+      }, {
+        withCredentials: true, // Enviar cookies
       });
-      if (response.ok) {
-        fetchUsuarios(); // Atualiza a lista de usuários
-        setNome('');
-        setEmail('');
-        setSenha('');
-      } else {
-        setError('Erro ao criar usuário');
-      }
+      fetchUsuarios(); // Atualiza a lista de usuários
+      setNome('');
+      setEmail('');
+      setSenha('');
     } catch (error) {
-      setError('Erro ao conectar com o servidor');
+      setError('Erro ao criar usuário');
     }
   };
 
   // Função para deletar um usuário
   const deleteUsuario = async (id) => {
     try {
-      await fetch(`http://localhost:3000/usuarios/${id}`, {
-        method: 'DELETE',
+      await axios.delete(`http://localhost:4000/usuarios/${id}`, {
+        withCredentials: true, // Enviar cookies
       });
       fetchUsuarios(); // Atualiza a lista de usuários
     } catch (error) {
@@ -59,12 +57,12 @@ const UserList = () => {
   const updateUsuario = async (event) => {
     event.preventDefault();
     try {
-      await fetch(`http://localhost:3000/usuarios/${editId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ nome, email, senha }),
+      await axios.put(`http://localhost:4000/usuarios/${editId}`, {
+        nome,
+        email,
+        senha,
+      }, {
+        withCredentials: true, // Enviar cookies
       });
       setEditId(null);
       setNome('');

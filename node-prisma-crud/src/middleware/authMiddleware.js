@@ -3,7 +3,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 
 // Middleware para verificar o token
 exports.protect = (req, res, next) => {
-  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+  // Obtém o token do cookie
+  const token = req.cookies.token;
+  console.log(token)
 
   if (!token) {
     return res.status(401).json({ message: 'Token não fornecido' });

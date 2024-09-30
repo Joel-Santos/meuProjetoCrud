@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -9,24 +10,18 @@ const Login = ({ onLogin }) => {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3000/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, senha }),
+      const response = await axios.post('http://localhost:4000/login', {
+        email,
+        senha,
+      }, {
+        withCredentials: true, // Include cookies in the request
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('token', data.token);  // Armazenar o token no localStorage
-        onLogin();  // Atualizar o estado de autenticação no componente pai (App.js)
-      } else {
-        setError(data.message || 'Erro ao fazer login');
-      }
-    } catch (error) {
-      setError('Erro ao conectar com o servidor');
+      // You don't need to store the token in localStorage anymore
+      onLogin(); // Update authentication state in parent component
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Erro ao fazer login';
+      setError(errorMessage);
     }
   };
 
